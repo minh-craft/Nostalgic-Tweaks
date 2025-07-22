@@ -1,5 +1,14 @@
 # Nostalgic Tweaks 1.20.1 (Fabric/Forge/NeoForge) Changelog
 
+## 2.0.0-beta922
+
+This update fixes reported issues.
+
+- Fixed items, like the crossbow, being immediately used when `Instant Eat` is enabled.
+- Fixed players not being able to sprint in creative when their stamina was fully depleted in survival.
+- Fixed show alternative experience text in creative inventory screen not working when enabled.
+- Fixed click title screen logo to toggle tweak not working with some alternative title screen button layouts.
+
 ## 2.0.0-beta921
 
 This update fixes a crash and a reported issue.
