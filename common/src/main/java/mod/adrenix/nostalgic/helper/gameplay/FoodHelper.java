@@ -16,6 +16,9 @@ public abstract class FoodHelper
      */
     public static boolean isInstantaneousEdible(ItemStack itemStack)
     {
+        if (!itemStack.isEdible())
+            return false;
+
         return GameplayTweak.INSTANT_EAT.get() && !GameplayTweak.IGNORED_EDIBLES.get().containsItem(itemStack);
     }
 }
