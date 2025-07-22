@@ -7,6 +7,7 @@ import mod.adrenix.nostalgic.helper.gameplay.FoodHelper;
 import mod.adrenix.nostalgic.tweak.config.GameplayTweak;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,7 +26,7 @@ public abstract class LivingEntityMixin
     @Shadow protected ItemStack useItem;
 
     @Shadow
-    public abstract ItemStack getUseItem();
+    public abstract ItemStack getItemInHand(InteractionHand hand);
 
     /* Injections */
 
@@ -39,9 +40,9 @@ public abstract class LivingEntityMixin
             target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/player/Player;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V"
         )
     )
-    private boolean nt_food_health$shouldPlayConsumedFoodSound(Level level, Player player, double x, double y, double z, SoundEvent sound, SoundSource category, float volume, float pitch)
+    private boolean nt_food_health$shouldPlayConsumedFoodSound(Level level, Player player, double x, double y, double z, SoundEvent sound, SoundSource category, float volume, float pitch, Level arg1, ItemStack foodItem)
     {
-        return !FoodHelper.isInstantaneousEdible(this.getUseItem());
+        return !FoodHelper.isInstantaneousEdible(foodItem);
     }
 
     /**
@@ -54,9 +55,9 @@ public abstract class LivingEntityMixin
             target = "Lnet/minecraft/world/entity/LivingEntity;addEatEffect(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;)V"
         )
     )
-    private boolean nt_food_health$shouldAddFoodEffects(LivingEntity instance, ItemStack food, Level level, LivingEntity livingEntity)
+    private boolean nt_food_health$shouldAddFoodEffects(LivingEntity instance, ItemStack foodItem, Level level, LivingEntity livingEntity)
     {
-        return !FoodHelper.isInstantaneousEdible(food) || !GameplayTweak.PREVENT_INSTANT_EAT_EFFECTS.get();
+        return !FoodHelper.isInstantaneousEdible(foodItem) || !GameplayTweak.PREVENT_INSTANT_EAT_EFFECTS.get();
     }
 
     /**
@@ -85,9 +86,9 @@ public abstract class LivingEntityMixin
             target = "Lnet/minecraft/world/item/ItemStack;getUseDuration()I"
         )
     )
-    private int nt_food_health$modifyUseDurationOnStartUsingItem(int useDuration)
+    private int nt_food_health$modifyUseDurationOnStartUsingItem(int useDuration, InteractionHand hand)
     {
-        if (FoodHelper.isInstantaneousEdible(this.useItem))
+        if (FoodHelper.isInstantaneousEdible(this.getItemInHand(hand)))
             return 1;
 
         return useDuration;
@@ -104,9 +105,9 @@ public abstract class LivingEntityMixin
             target = "Lnet/minecraft/world/entity/LivingEntity;triggerItemUseEffects(Lnet/minecraft/world/item/ItemStack;I)V"
         )
     )
-    private boolean nt_food_health$shouldTriggerItemUseEffectsOnUpdate(LivingEntity entity, ItemStack itemStack, int amount)
+    private boolean nt_food_health$shouldTriggerItemUseEffectsOnUpdate(LivingEntity entity, ItemStack usingItem, int amount)
     {
-        return !FoodHelper.isInstantaneousEdible(this.useItem);
+        return !FoodHelper.isInstantaneousEdible(usingItem);
     }
 
     /**
